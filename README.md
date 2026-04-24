@@ -9,7 +9,7 @@ A homelab setup using k3s cluster. It has two clusters, one at a VPS hosting cri
 
 I use FluxCD to use this git repository as the single source of truth to manage all 3 servers. Any change here is reflected in appropriate server.
 
-## Getting Started
+## Installing k3s
 1. Install k3s server on `sage` and `herald` using this command:
 ```bash
 curl -sfL https://get.k3s.io | sh -
@@ -27,7 +27,7 @@ sudo chown $(id -u):$(id -g) .kube/config
 export KUBECONFIG=$HOME/.kube/config # Or add it to .bashrc
 ```
 
-## Bootstraping FluxCD
+## Installing and bootstrapping FluxCD
 1. On `sage` and `herald`, install FluxCD using the command
 ```bash
 curl -s https://fluxcd.io/install.sh | sudo bash
@@ -41,14 +41,14 @@ flux check --pre
 ssh-keygen -t ed25519 -C "flux-deploy-key" -f ~/.ssh/flux-deploy-key -N ""
 ```
 4. Copy the `~/.ssh/flux-deploy-key.pub` file contents and add a SSH key on github or related git hosting service.
-5. Finally bootstrap FluxCD using the following command
+5. Finally bootstrap FluxCD using the following command on `herald`. For `sage`, replace `clusters/cloud` with `clusters/home`.
 ```bash
 flux bootstrap git \
   --url=ssh://git@github.com/su-nikunj/homelab \
   --branch=main \
   --private-key-file="$HOME/.ssh/flux-deploy-key" \
   --password="" \
-  --path=clusters/cloud \ # clusters/home for sage
+  --path=clusters/cloud \
   --components-extra=image-reflector-controller,image-automation-controller
 ```
 6. Now all the changes pushed to the git repo should be picked automatically by FluxCD and deployed in the clusters.
