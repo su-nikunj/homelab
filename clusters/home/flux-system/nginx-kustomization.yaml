@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: nginx
+  namespace: flux-system
+spec:
+  interval: 1m
+  path: ../../../apps/nginx
+  prune: true        # delete cluster objects that vanish from Git
+  wait: true         # only report Ready when pods are actually healthy
+  timeout: 2m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system   # the source bootstrap created for you

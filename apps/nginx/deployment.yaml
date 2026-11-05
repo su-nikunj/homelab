@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: nginx-test
+  labels:
+    app: nginx
+spec:
+  replicas: 2                     # how many pods
+  selector:
+    matchLabels:
+      app: nginx                  # which pods belong to this deployment
+  template:                       # the pod template
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.31-alpine   # always pin a version, never "latest"
+          ports:
+            - containerPort: 80
+          resources:                 # optional, but good hygiene
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
